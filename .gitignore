@@ -1,0 +1,10 @@
+*.snap
+/snap/.snapcraft/
+/parts/
+/stage/
+/prime/
+/.snapcraft/
+/artifacts/
+__pycache__/
+/migration-test/
+/library/

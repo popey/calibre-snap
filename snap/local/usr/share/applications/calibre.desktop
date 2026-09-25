@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Calibre
+Comment=Manage and convert ebooks
+Exec=calibre %U
+Icon=${SNAP}/opt/calibre/resources/images/lt.png
+Terminal=false
+Categories=Office;
+MimeType=application/epub+zip;application/x-mobipocket-ebook;
+StartupWMClass=calibre

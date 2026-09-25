@@ -1,0 +1,35 @@
+name: Build and test Calibre
+description: Build the checked-out core24 recipe with LXD and test its installed commands
+runs:
+  using: composite
+  steps:
+    - name: Test packaging helpers
+      shell: bash
+      run: python3 -m unittest discover -s tests -v
+    - name: Prepare LXD and Snapcraft
+      shell: bash
+      run: |
+        if snap list lxd >/dev/null 2>&1; then
+          sudo snap refresh lxd --channel=6/stable
+        else
+          sudo snap install lxd --channel=6/stable
+        fi
+        sudo lxd waitready
+        sudo lxd init --auto
+        sudo snap install snapcraft --classic
+    - name: Build with LXD
+      shell: bash
+      run: sudo snapcraft --use-lxd
+    - name: Install and smoke test
+      shell: bash
+      run: |
+        sudo snap install --dangerous ./calibre_*.snap
+        ./scripts/smoke-test.sh
+    - uses: actions/upload-artifact@v4
+      with:
+        name: calibre-amd64-${{ github.run_id }}-${{ github.run_attempt }}
+        path: |
+          calibre_*.snap
+          snap/snapcraft.yaml
+        if-no-files-found: error
+        retention-days: 14

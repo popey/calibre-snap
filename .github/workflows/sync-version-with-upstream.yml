@@ -1,0 +1,49 @@
+name: Sync version with upstream
+on:
+  schedule:
+    - cron: '23 6 * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+  pull-requests: write
+concurrency:
+  group: calibre-upstream-version
+  cancel-in-progress: false
+jobs:
+  sync-version:
+    if: github.repository == 'popey/calibre-snap'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+      - name: Resolve and validate newer upstream release
+        id: upstream
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 scripts/update-upstream.py --github-output "$GITHUB_OUTPUT"
+      - name: Build and test updated recipe
+        if: steps.upstream.outputs.needs_update == 'true'
+        uses: ./.github/actions/build-snap
+      - name: Create or update release PR
+        if: steps.upstream.outputs.needs_update == 'true'
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
+        with:
+          token: ${{ github.token }}
+          base: ${{ github.event.repository.default_branch }}
+          branch: auto-update-calibre
+          delete-branch: true
+          add-paths: snap/snapcraft.yaml
+          commit-message: "Update Calibre to ${{ steps.upstream.outputs.latest }}"
+          title: "Update Calibre to ${{ steps.upstream.outputs.latest }}"
+          body: |
+            Update Calibre from `${{ steps.upstream.outputs.current }}` to `${{ steps.upstream.outputs.latest }}`.
+
+            - Pins the official amd64 Linux bundle and its SHA-256 digest.
+            - Rejects prereleases, downgrades, and changes to an already pinned release asset.
+            - Passed an LXD build and installed-snap conversion/library smoke tests before this PR was created.
+            - [Upstream release](https://github.com/kovidgoyal/calibre/releases/tag/v${{ steps.upstream.outputs.latest }})
+            - [Validation run and snap artifact](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+
+            This does not publish to the Snap Store or merge automatically.

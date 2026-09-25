@@ -1,0 +1,75 @@
+name: calibre
+title: Calibre
+base: core24
+version: '9.15.0'
+summary: Calibre ebook manager
+description: |
+  Manage, convert and read ebooks with Calibre. This experimental snap
+  repackages the upstream Linux binaries and is not endorsed or supported
+  by the Calibre project. Report packaging issues to this repository.
+website: https://calibre-ebook.com
+source-code: https://github.com/popey/calibre-snap
+issues: https://github.com/popey/calibre-snap/issues
+grade: stable
+confinement: strict
+compression: lzo
+license: GPL-3.0
+platforms:
+  amd64:
+
+apps:
+  calibre:
+    command: opt/calibre/calibre
+    extensions: [gnome]
+    command-chain: [bin/calibre-env]
+    desktop: usr/share/applications/calibre.desktop
+    plugs: [home, removable-media, network, network-bind, cups, raw-usb, audio-playback]
+  ebook-viewer:
+    command: opt/calibre/ebook-viewer
+    extensions: [gnome]
+    command-chain: [bin/calibre-env]
+    plugs: [home, removable-media, network, audio-playback]
+  ebook-convert:
+    command: opt/calibre/ebook-convert
+    extensions: [gnome]
+    command-chain: [bin/calibre-env]
+    plugs: [home, removable-media]
+  calibredb:
+    command: opt/calibre/calibredb
+    extensions: [gnome]
+    command-chain: [bin/calibre-env]
+    plugs: [home, removable-media, network]
+
+parts:
+  calibre:
+    plugin: dump
+    source: https://github.com/kovidgoyal/calibre/releases/download/v9.15.0/calibre-9.15.0-x86_64.txz
+    source-type: tar
+    source-checksum: sha256/3f5301c0aa51e5fb2d5f6dcd04024ba4e86501ab328ce5d9d6760efccb887990
+    organize:
+      '*': opt/calibre/
+  runtime-libraries:
+    plugin: nil
+    stage-packages:
+      - libxcb-cursor0
+      - libxcb-xinerama0
+      - libopengl0
+      - libxkbcommon-x11-0
+      - libnss3
+      - libnspr4
+      - libxcomposite1
+      - libxdamage1
+      - libxrandr2
+      - libxtst6
+      - libpci3
+  socket-compat:
+    plugin: nil
+    source: snap/socket-compat
+    build-packages: [gcc, libc6-dev]
+    override-build: |
+      mkdir -p "$CRAFT_PART_INSTALL/lib"
+      gcc -shared -fPIC -O2 -Wall -Wextra -Werror socket-compat.c -ldl \
+        -o "$CRAFT_PART_INSTALL/lib/libcalibre-snap-compat.so"
+  launcher:
+    plugin: dump
+    source: snap/local

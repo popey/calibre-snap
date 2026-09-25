@@ -16,10 +16,16 @@ runs:
         fi
         sudo lxd waitready
         sudo lxd init --auto
+        # Match canonical/action-build: Docker's forwarding policy blocks LXD.
+        sudo iptables -P FORWARD ACCEPT
         sudo snap install snapcraft --classic
     - name: Build with LXD
       shell: bash
-      run: sudo snapcraft --use-lxd
+      run: |
+        if ! sudo snapcraft --use-lxd --verbose; then
+          sudo find /root/.local/state/snapcraft/log -name '*.log' -exec cat {} +
+          exit 1
+        fi
     - name: Install and smoke test
       shell: bash
       run: |

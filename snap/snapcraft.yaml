@@ -1,7 +1,7 @@
 name: calibre
 title: Calibre
 base: core24
-version: '9.15.0'
+version: '9.16.0'
 summary: Calibre ebook manager
 description: |
   Manage, convert and read ebooks with Calibre. This experimental snap
@@ -43,9 +43,9 @@ apps:
 parts:
   calibre:
     plugin: dump
-    source: https://github.com/kovidgoyal/calibre/releases/download/v9.15.0/calibre-9.15.0-x86_64.txz
+    source: https://github.com/kovidgoyal/calibre/releases/download/v9.16.0/calibre-9.16.0-x86_64.txz
     source-type: tar
-    source-checksum: sha256/3f5301c0aa51e5fb2d5f6dcd04024ba4e86501ab328ce5d9d6760efccb887990
+    source-checksum: sha256/03cd4fda43de23d65405a3c90b924bc4a5c84753e388589d4ca343d9ba561a1d
     organize:
       '*': opt/calibre/
   runtime-libraries:

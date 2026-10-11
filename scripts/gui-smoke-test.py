@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Exercise the installed strict snap on an isolated X11 desktop.
 
-Run through xvfb-run and dbus-run-session; requires openbox, xdotool and scrot.
+Run through xvfb-run; requires openbox, xdotool and scrot.
 Uses generated books only, and a private Calibre configuration.
 """
 import json

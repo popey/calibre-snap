@@ -128,7 +128,7 @@ To run the desktop regression test locally (with no other Calibre instances
 running), install Xvfb, xauth, Openbox, xdotool and scrot, then run:
 
 ```sh
-xvfb-run -a -s '-screen 0 1280x800x24' dbus-run-session -- python3 scripts/gui-smoke-test.py
+xvfb-run -a -s '-screen 0 1280x800x24' python3 scripts/gui-smoke-test.py
 ```
 
 The script uses generated books and private test preferences under your home,

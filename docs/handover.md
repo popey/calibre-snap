@@ -164,8 +164,9 @@ cross-version upgrade/rollback have not been demonstrated.
   https://github.com/popey/calibre-snap/actions/runs/36185266265
 - Successful manually dispatched updater (9.15.0 already current):
   https://github.com/popey/calibre-snap/actions/runs/36184793588
-- A real newer-release PR has not yet been observed; the no-update branch has
-  passed remotely. Snap and manifest artifacts are retained for 14 days.
+- The initial no-update branch passed remotely. PR #1 subsequently updated
+  Calibre to 9.16.0 and was merged; see the October update above. Snap, manifest
+  and app-test evidence artifacts are retained for 14 days.
 
 As checked September 27, recent upstream releases were usually 2–3 weeks apart,
 mostly Fridays, with 1–4 week gaps. This is observed cadence, not a schedule:
@@ -221,6 +222,7 @@ Socket tests, snap/LXD operations and GUI launches may require execution outside
 the coding sandbox. A sandbox permission failure is not automatically an app bug.
 Read the snap-packaging skill before packaging or publication work.
 
-At the start of this handover task, `store-assets/description.md` was untracked
-and its README was modified locally. These were deliberate pending Store-copy
-changes, not files to discard. This handover does not itself commit or push them.
+The handover, AGENTS.md and Store-description changes were committed and pushed
+on October 11 together with the automated desktop tests. The description was
+prepared for manual pasting into the Store UI; publication of that text remains
+unconfirmed.

@@ -36,8 +36,8 @@ runs:
       shell: bash
       run: |
         sudo apt-get update
-        sudo apt-get install -y xvfb xauth dbus-x11 openbox xdotool scrot
-        timeout 10m xvfb-run -a -s '-screen 0 1280x800x24' dbus-run-session -- python3 scripts/gui-smoke-test.py
+        sudo apt-get install -y xvfb xauth openbox xdotool scrot
+        timeout 10m xvfb-run -a -s '-screen 0 1280x800x24' python3 scripts/gui-smoke-test.py
     - name: Upload app test evidence
       if: always()
       uses: actions/upload-artifact@v4

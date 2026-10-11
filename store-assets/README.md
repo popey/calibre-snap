@@ -1,5 +1,8 @@
 # Store assets
 
+`description.md` contains paste-ready Markdown for the Snap Store description,
+including the issue tracker, optional device permissions and migration guidance.
+
 - `calibre.svg`: original upstream vector artwork, sized to **512×512**;
   original `viewBox="0 0 1024 1024"` preserves the full vector artwork.
 - `screenshots/01-library.png`: browse seven classics by cover.

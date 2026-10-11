@@ -1,5 +1,7 @@
 # Calibre snap
 
+Maintainer context and current recorded state: [project handover](docs/handover.md).
+
 Community packaging of [Calibre](https://calibre-ebook.com/).
 Not affiliated with or supported by the upstream project. Please report snap
 packaging issues here, not to Calibre's developer.
@@ -63,7 +65,12 @@ pushes to `main`, pull requests and manual requests. The separate
 `sync-version-with-upstream.yml` checks daily at 06:23 UTC and on manual requests.
 It validates a newer stable upstream release, updates version/URL/SHA-256 together,
 builds with LXD, installs the snap and tests HTML→EPUB, EPUB→old/both MOBI,
-EPUB→PDF, and library import before opening/updating `auto-update-calibre`.
+EPUB→PDF, and library import, then runs manager/viewer tests on an isolated X11
+desktop before opening/updating `auto-update-calibre`. The desktop test verifies
+metadata edits survive reopening, single-instance communication, clean shutdown,
+and viewer navigation. Logs and screenshots are retained as app-test artifacts,
+including on failure. This is automated regression coverage, not a guarantee for
+every device, plugin, or desktop environment.
 Unchanged versions do nothing. Downgrades, prereleases, missing digests and changed
 assets for an already-pinned version fail rather than silently changing the pin.
 
@@ -116,3 +123,13 @@ See [migration procedure and test results](docs/migration.md) before adopting an
 See the [Flatpak issue audit](docs/flatpak-issue-audit.md) for all 79 issues reviewed, mitigations, and remaining compatibility tests.
 
 Latest rebuild and regression results: [2026-09-25 retest](docs/retest-2026-09-25.md).
+
+To run the desktop regression test locally (with no other Calibre instances
+running), install Xvfb, xauth, Openbox, xdotool and scrot, then run:
+
+```sh
+xvfb-run -a -s '-screen 0 1280x800x24' dbus-run-session -- python3 scripts/gui-smoke-test.py
+```
+
+The script uses generated books and private test preferences under your home,
+leaves evidence in `artifacts/app-tests/`, and does not use your existing library.

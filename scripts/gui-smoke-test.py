@@ -104,7 +104,8 @@ try:
     assert manager.wait(timeout=30) == 0, 'Manager failed during shutdown'
     # Reopen the database after GUI shutdown, never concurrently with it.
     books = json.loads(run('calibredb', 'list', '--with-library', library, '--for-machine'))
-    assert len(books) == 1 and books[0]['title'] == 'Calibre GUI Test — edited', books
+    assert next(b for b in books if str(b['id']) == book_id)['title'] == 'Calibre GUI Test — edited', books
+    assert all(str(b['id']) == book_id or b['title'] == 'Quick Start Guide' for b in books), books
     viewer = start('ebook-viewer', work / 'book.epub')
     viewer_window = window(viewer, r'Calibre GUI Test.*E-book viewer')
     capture(viewer_window, 'viewer-start.png')

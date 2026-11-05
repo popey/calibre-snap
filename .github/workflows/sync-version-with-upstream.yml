@@ -13,19 +13,18 @@ jobs:
   sync-version:
     if: github.repository == 'popey/calibre-snap'
     runs-on: ubuntu-24.04
-    timeout-minutes: 60
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.event.repository.default_branch }}
+      - name: Test packaging helpers
+        run: python3 -m unittest discover -s tests -v
       - name: Resolve and validate newer upstream release
         id: upstream
         env:
           GH_TOKEN: ${{ github.token }}
         run: python3 scripts/update-upstream.py --github-output "$GITHUB_OUTPUT"
-      - name: Build and test updated recipe
-        if: steps.upstream.outputs.needs_update == 'true'
-        uses: ./.github/actions/build-snap
       - name: Create or update release PR
         if: steps.upstream.outputs.needs_update == 'true'
         uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
@@ -42,8 +41,9 @@ jobs:
 
             - Pins the official amd64 Linux bundle and its SHA-256 digest.
             - Rejects prereleases, downgrades, and changes to an already pinned release asset.
-            - Passed an LXD build and installed-snap conversion/library smoke tests before this PR was created.
+            - Build and installed conversion/library/desktop checks run on this PR; approve workflows if GitHub requests it.
+            - Merge only after the PR build passes. Snapstead reuses the successful merged-main artifact and runs independent installed tests before edge publication.
             - [Upstream release](https://github.com/kovidgoyal/calibre/releases/tag/v${{ steps.upstream.outputs.latest }})
-            - [Validation run and snap artifact](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            - [Release metadata validation](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
 
             This does not publish to the Snap Store or merge automatically.

@@ -48,7 +48,7 @@ runs:
         retention-days: 14
     - uses: actions/upload-artifact@v4
       with:
-        name: calibre-amd64-${{ github.run_id }}-${{ github.run_attempt }}
+        name: snap
         path: |
           calibre_*.snap
           snap/snapcraft.yaml

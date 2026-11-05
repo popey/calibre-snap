@@ -226,3 +226,19 @@ The handover, AGENTS.md and Store-description changes were committed and pushed
 on October 11 together with the automated desktop tests. The description was
 prepared for manual pasting into the Store UI; publication of that text remains
 unconfirmed.
+
+## 5 November 2026: reduce duplicate release builds (#83)
+
+The sync workflow now validates metadata and packaging helpers, then opens its
+release PR without compiling an uncommitted working tree. The existing PR build
+retains conversion, library, editor, viewer and desktop evidence. GitHub may
+require a maintainer to approve workflows on a PR created with GITHUB_TOKEN;
+merge only after its build succeeds. See the [GitHub trigger rules](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/trigger-a-workflow).
+
+The successful main push builds the final commit and retains artifact `snap`
+for 14 days. Snapstead can verify and import that exact artifact, then run its
+independent installed tests without rebuilding. PR and dispatch artifacts are
+not eligible for publication import. Missing/expired CI artifacts retain the
+native-build fallback; provenance/digest mismatches fail for review. This leaves
+one PR build and one merged-main build per release, plus independent runtime
+tests. The upstream updater and ordinary builds never upload or merge.

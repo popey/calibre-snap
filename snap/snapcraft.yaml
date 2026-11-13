@@ -23,7 +23,7 @@ apps:
     extensions: [gnome]
     command-chain: [bin/calibre-env]
     desktop: usr/share/applications/calibre.desktop
-    plugs: [home, removable-media, network, network-bind, cups, raw-usb, audio-playback]
+    plugs: [home, removable-media, mount-observe, network, network-bind, cups, raw-usb, audio-playback]
   ebook-viewer:
     command: opt/calibre/ebook-viewer
     extensions: [gnome]

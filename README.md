@@ -49,11 +49,17 @@ Device access (not connected automatically):
 ```sh
 snap connect calibre:removable-media
 snap connect calibre:raw-usb
+snap connect calibre:mount-observe
 ```
 
 Connect `raw-usb` to enable the device scanner; without it Calibre logs a
-permission error while scanning `/sys/bus/usb/devices`. Mounted readers may work
-via removable-media. USB/MTP device access, printing,
+permission error while scanning `/sys/bus/usb/devices`. Connect `mount-observe`
+so Calibre can read `/proc/mounts` to locate mounted readers, and
+`removable-media` to access their files. Mount the reader using your desktop's
+file manager before opening Calibre. The `mount-observe` connection requires a
+build containing the fix for [issue #5](https://github.com/popey/calibre-snap/issues/5);
+older builds do not declare this plug. Automatic mounting/ejecting,
+USB/MTP device access, printing,
 plugins, and the content server need separate testing. This proof of concept
 does not establish full device compatibility. Hidden host directories and
 arbitrary filesystem paths are outside the normal `home` interface access.

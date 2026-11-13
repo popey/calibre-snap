@@ -3,6 +3,21 @@
 This records the state established during development, rather than a live Store
 or GitHub status check. Recheck remote state before a future release.
 
+## Update — 2026-11-13: Kindle mount lookup (#5)
+
+- Reproduced the reporter's `/proc/mounts` PermissionError on installed 9.18.0
+  revision 6 with both `raw-usb` and `removable-media` connected. Calling
+  `calibre.devices.udisks.node_mountpoint()` with a nonexistent device produces
+  the same traceback without opening a library or touching reader hardware.
+- Added `mount-observe` to the manager's plugs. This interface permits reading
+  the mount table and requires `snap connect calibre:mount-observe` after
+  installing a build containing this change. Existing builds lack the plug.
+- The shared CI action now connects the interface and exercises Calibre's mount
+  lookup inside confinement, retaining its log with the app-test evidence.
+- Await the next build for validation of the fix and a real Kindle test. This
+  does not establish automatic mounting/ejecting through UDisks. Mount the
+  reader with the host file manager first. Keep #5 open pending testing.
+
 ## Update — 2026-10-11: automated desktop coverage
 
 The common build action now runs an isolated Xvfb/Openbox desktop test as well as

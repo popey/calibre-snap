@@ -32,6 +32,17 @@ runs:
         sudo snap install --dangerous ./calibre_*.snap
         mkdir -p artifacts/app-tests
         ./scripts/smoke-test.sh 2>&1 | tee artifacts/app-tests/conversions.log
+    - name: Test reader mount lookup
+      shell: bash
+      run: |
+        sudo snap connect calibre:mount-observe
+        snap run --shell calibre -c '
+          exec "$SNAP/bin/calibre-env" "$SNAP/opt/calibre/calibre-debug" -c "
+        from calibre.devices.udisks import node_mountpoint
+        assert node_mountpoint(\"/dev/calibre-snap-smoke-test-nonexistent\") is None
+        print(\"Reader mount lookup passed\")
+        "
+        ' 2>&1 | tee artifacts/app-tests/mount-lookup.log
     - name: Test desktop applications
       shell: bash
       run: |

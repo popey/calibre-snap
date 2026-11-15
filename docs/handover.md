@@ -3,6 +3,28 @@
 This records the state established during development, rather than a live Store
 or GitHub status check. Recheck remote state before a future release.
 
+## Update — 2026-11-15: mount-filter build published to edge
+
+- User authorised building the prototype and publishing it to edge for #5.
+  Source commit: `4828e8d88a67dd874287cc6cd4e2d0db3a302529`, pushed on
+  `prototype/filter-reader-mounts`; it is not merged into main.
+- `snapcraft pack --use-lxd` built Calibre 9.18.0 amd64, core24, strict. Artifact:
+  `artifacts/release-mount-filter/calibre_9.18.0_amd64.snap`; SHA-256:
+  `43ef7b41138fd27961d3f51d959b3b99ef2882c7c08d4dfbbe4934de90f6c6bd`.
+- Installed the exact artifact locally. The confined mount-filter probe passed
+  using its packaged library, and the manager's activation setting was checked.
+  EPUB, old/both MOBI, PDF conversion and database import/list all passed with
+  generated books and a separate library. Snap review-tools passed. All 13
+  packaging tests had passed before the build. Full desktop GUI tests were not
+  rerun for this artifact; real Kindle transfer/eject still need reporter testing.
+- Store accepted **revision 8** and confirmed release to **latest/edge**.
+  Stable was revision 6 before the upload; only edge was targeted.
+- Test with `snap refresh calibre --edge`, keeping `mount-observe`, `raw-usb`
+  and `removable-media` connected. Mount the reader with the host file manager
+  first. No new interface is required for the filtering adapter.
+- Build, review, installed-test and upload logs plus an evidence manifest are
+  under `artifacts/release-mount-filter/` (ignored). Keep #5 open pending results.
+
 ## Update — 2026-11-15: mount-path filtering prototype (#5)
 
 - The reporter tested the first fix and reached a second error: Calibre chooses

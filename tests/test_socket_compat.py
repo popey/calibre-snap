@@ -12,7 +12,8 @@ class SocketCompatibilityTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             library = str(Path(directory) / 'compat.so')
             subprocess.run(['cc', '-shared', '-fPIC', '-Wall', '-Wextra', '-Werror',
-                            'snap/socket-compat/socket-compat.c', '-ldl', '-o', library], check=True)
+                            'snap/socket-compat/socket-compat.c',
+                            'snap/socket-compat/mount-compat.c', '-ldl', '-o', library], check=True)
             env = dict(os.environ, LD_PRELOAD=library)
             subprocess.run([sys.executable, '-c', r'''
 import os

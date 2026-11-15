@@ -116,7 +116,36 @@ A small C adapter (`snap/socket-compat/socket-compat.c`) prefixes Calibre's
 abstract Unix sockets with `snap.calibre.` to meet snapd's socket
 namespace rules. It covers bind and connect, including Qt and child processes;
 it leaves other sockets alone. The upstream binary bundle is unmodified.
-Regression tests compile and exercise the adapter as well as the release updater.
+The same library includes a prototype mount-table adapter
+(`snap/socket-compat/mount-compat.c`), enabled for the manager with
+`CALIBRE_SNAP_FILTER_MOUNTS=1`. On each read-only open of `/proc/mounts` or
+`/proc/self/mounts`, it removes a `hostfs` entry only if the table also contains
+the corresponding `/media`, `/run/media` or `/mnt` path with the same `/dev/`
+source, filesystem type and mount options. Calibre can then select the normal
+path allowed by `removable-media`. The original table must still be readable
+through `mount-observe`. Unmatched entries remain unchanged.
+
+This supplies a read-only snapshot per open; it does not change host mounts or
+grant filesystem access. Allocation or snapshot failures fall back to the real
+table. It is intended for Calibre's open/read/close lookup, not a general
+replacement for procfs polling. Real reader transfers and eject remain untested.
+
+Regression tests compile and exercise both adapters as well as the release
+updater. CI also runs `sh scripts/mount-compat-smoke-test.sh` against the installed
+snap's actual Calibre lookup. Its synthetic table reproduces the wrong selection
+without the filter and checks both entry orders, escaped spaces and reconnection
+with the filter. It opens no library and writes to no reader.
+
+To test a locally compiled prototype against an installed snap without replacing
+that installation, pass the adapter's absolute path to the same script:
+
+```sh
+mkdir -p artifacts/mount-prototype
+cc -shared -fPIC -O2 -Wall -Wextra -Werror \
+  snap/socket-compat/socket-compat.c snap/socket-compat/mount-compat.c -ldl \
+  -o artifacts/mount-prototype/libcalibre-snap-compat.so
+sh scripts/mount-compat-smoke-test.sh "$PWD/artifacts/mount-prototype/libcalibre-snap-compat.so"
+```
 
 Snapcraft reports unused bundled libraries and missing dependencies for optional
 upstream Qt plugins (such as EGLFS and QtPdf). These warnings remain visible;

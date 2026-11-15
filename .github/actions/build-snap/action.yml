@@ -43,6 +43,7 @@ runs:
         print(\"Reader mount lookup passed\")
         "
         ' 2>&1 | tee artifacts/app-tests/mount-lookup.log
+        sh scripts/mount-compat-smoke-test.sh 2>&1 | tee artifacts/app-tests/mount-compat.log
     - name: Test desktop applications
       shell: bash
       run: |

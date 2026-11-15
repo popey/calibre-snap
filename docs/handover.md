@@ -3,6 +3,31 @@
 This records the state established during development, rather than a live Store
 or GitHub status check. Recheck remote state before a future release.
 
+## Update — 2026-11-15: mount-path filtering prototype (#5)
+
+- The reporter tested the first fix and reached a second error: Calibre chooses
+  `/var/lib/snapd/hostfs/run/media/kyle/Kindle/` and its write probe fails. Its
+  generic "read only" message does not distinguish confinement denial from a
+  read-only filesystem. The native installation transfers successfully.
+- Added `mount-compat.c` to the existing preload library, leaving the upstream
+  Calibre bundle unchanged. The manager opts in through its app environment.
+  Only read-only opens of `/proc/mounts` and `/proc/self/mounts` are adapted.
+  A hostfs entry is omitted only when its exact unprefixed removable-media path,
+  device, type and options are also present. All other entries are retained.
+- The original open must succeed first, so `mount-observe` is still required.
+  A sealed, read-only memory file supplies a fresh snapshot on each open. Failed
+  snapshot creation falls back to the original table. No host mount changes or
+  added permissions are involved. This is not a procfs polling implementation.
+- On installed 9.18.0 revision 7, the compiled prototype passed the confined
+  `scripts/mount-compat-smoke-test.sh` probe: control selects hostfs, filtered
+  lookup selects the normal path in either order, escaped spaces decode, and
+  simulated removal/reconnection is observed. Permission errors still propagate
+  and the real mount table remains readable. No library or reader was opened.
+- The prototype was loaded from the workspace for that test; the installed snap
+  was not replaced. The recipe and shared CI action now build/test it, but a full
+  rebuilt snap and real Kindle transfer/eject are still pending. No release or
+  issue reply has been made for this prototype.
+
 ## Update — 2026-11-13: Kindle mount lookup (#5)
 
 - Reproduced the reporter's `/proc/mounts` PermissionError on installed 9.18.0

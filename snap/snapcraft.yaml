@@ -23,6 +23,8 @@ apps:
     extensions: [gnome]
     command-chain: [bin/calibre-env]
     desktop: usr/share/applications/calibre.desktop
+    environment:
+      CALIBRE_SNAP_FILTER_MOUNTS: '1'
     plugs: [home, removable-media, mount-observe, network, network-bind, cups, raw-usb, audio-playback]
   ebook-viewer:
     command: opt/calibre/ebook-viewer
@@ -68,7 +70,7 @@ parts:
     build-packages: [gcc, libc6-dev]
     override-build: |
       mkdir -p "$CRAFT_PART_INSTALL/lib"
-      gcc -shared -fPIC -O2 -Wall -Wextra -Werror socket-compat.c -ldl \
+      gcc -shared -fPIC -O2 -Wall -Wextra -Werror socket-compat.c mount-compat.c -ldl \
         -o "$CRAFT_PART_INSTALL/lib/libcalibre-snap-compat.so"
   launcher:
     plugin: dump
